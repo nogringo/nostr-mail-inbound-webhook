@@ -1,0 +1,21 @@
+services:
+  webhook:
+    image: ghcr.io/nogringo/nostr-mail-inbound-webhook:latest
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      PORT: 8080
+      DATA_DIR: /data
+      NOSTR_PRIVATE_KEY: ${NOSTR_PRIVATE_KEY:?Set NOSTR_PRIVATE_KEY}
+      WEBHOOK_SIGNING_KEY: ${WEBHOOK_SIGNING_KEY:-}
+      SIGNATURE_TOLERANCE_SECONDS: ${SIGNATURE_TOLERANCE_SECONDS:-900}
+      BOOTSTRAP_NOSTR_RELAYS: ${BOOTSTRAP_NOSTR_RELAYS:-}
+      DEFAULT_DM_RELAYS: ${DEFAULT_DM_RELAYS:-}
+      DEFAULT_BLOSSOM_SERVERS: ${DEFAULT_BLOSSOM_SERVERS:-}
+      MAX_MIME_BYTES: ${MAX_MIME_BYTES:-67108864}
+    volumes:
+      - nostr-mail-inbound-data:/data
+
+volumes:
+  nostr-mail-inbound-data:

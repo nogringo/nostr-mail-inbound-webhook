@@ -1,0 +1,32 @@
+name: inbound_mail_webhook
+description: A reusable inbound email webhook that forwards Haraka/Mailgun MIME payloads to Nostr Mail.
+version: 1.0.0
+repository: https://github.com/nogringo/nostr-mail-inbound-webhook
+
+topics:
+  - nostr
+  - email
+  - webhook
+  - smtp
+
+environment:
+  sdk: ^3.12.1
+
+dependencies:
+  bip340: ^0.3.1
+  blossom_cache: ^0.3.0
+  crypto: ^3.0.7
+  enough_mail_plus: ^2.2.4
+  idb_sqflite: ^1.4.2
+  ndk: ^0.8.4-dev.4
+  nostr_mail: ^2.2.1
+  path: ^1.9.1
+  sembast: ^3.8.9
+  shelf: ^1.4.2
+  shelf_router: ^1.1.2
+  sqflite_common_ffi: ^2.4.2
+
+dev_dependencies:
+  http: ^1.2.2
+  lints: ^6.0.0
+  test: ^1.25.6
