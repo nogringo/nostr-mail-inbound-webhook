@@ -445,10 +445,10 @@ packages:
     dependency: "direct main"
     description:
       name: ndk
-      sha256: c1eae3b4343607db29fa346a0f0b459ce964503d1755558465b4bb7a18d8f8ca
+      sha256: "3d00fa0c936b184451086492b6775c06fa83233a0d00d4da753361f3507927b6"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.4-dev.4"
+    version: "0.8.4-dev.5"
   ndk_bip32_keys:
     dependency: transitive
     description:

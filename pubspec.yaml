@@ -18,7 +18,7 @@ dependencies:
   crypto: ^3.0.7
   enough_mail_plus: ^2.2.4
   idb_sqflite: ^1.4.2
-  ndk: ^0.8.4-dev.4
+  ndk: ^0.8.4-dev.5
   nostr_mail: ^2.2.1
   path: ^1.9.1
   sembast: ^3.8.9
