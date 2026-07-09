@@ -1,5 +1,6 @@
 import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:http/http.dart';
+import 'package:ndk/ndk.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:test/test.dart';
 import 'package:inbound_mail_webhook/inbound_mail_webhook.dart';
@@ -9,15 +10,18 @@ class FakeMailer implements MimeMailer {
   bool throwOnSend = false;
 
   @override
-  Future<void> sendMime(MimeMessage message, {String? mailFrom}) async {
+  Future<void> sendMime(
+    MimeMessage message, {
+    required String recipientPubkey,
+    String? mailFrom,
+  }) async {
     if (throwOnSend) throw MimeDeliveryException('boom');
     sent.add(message);
   }
 }
 
 void main() {
-  const pubkey =
-      '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  final (_, pubkey) = const Bip340EventSignerFactory().generateKeyPair();
   late FakeMailer mailer;
   late Uri baseUri;
   late dynamic server;

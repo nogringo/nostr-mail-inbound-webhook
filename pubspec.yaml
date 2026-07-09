@@ -17,9 +17,10 @@ dependencies:
   blossom_cache: ^0.3.0
   crypto: ^3.0.7
   enough_mail_plus: ^2.2.4
+  http: ^1.6.0
   idb_sqflite: ^1.4.2
   ndk: ^0.8.4-dev.5
-  nostr_mail: ^2.2.1
+  nostr_mail: ^2.4.0
   path: ^1.9.1
   sembast: ^3.8.9
   shelf: ^1.4.2
@@ -27,6 +28,5 @@ dependencies:
   sqflite_common_ffi: ^2.4.2
 
 dev_dependencies:
-  http: ^1.2.2
   lints: ^6.0.0
   test: ^1.25.6

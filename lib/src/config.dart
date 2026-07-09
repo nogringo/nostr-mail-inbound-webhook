@@ -9,6 +9,8 @@ class WebhookConfig {
     required this.defaultDmRelays,
     required this.defaultBlossomServers,
     required this.maxMimeBytes,
+    required this.inboundNotificationUrl,
+    required this.inboundNotificationToken,
   });
 
   final int port;
@@ -20,6 +22,8 @@ class WebhookConfig {
   final List<String> defaultDmRelays;
   final List<String> defaultBlossomServers;
   final int maxMimeBytes;
+  final Uri? inboundNotificationUrl;
+  final String? inboundNotificationToken;
 
   bool get requiresSignature => webhookSigningKey.isNotEmpty;
 
@@ -40,8 +44,22 @@ class WebhookConfig {
       defaultDmRelays: _parseList(env['DEFAULT_DM_RELAYS']),
       defaultBlossomServers: _parseList(env['DEFAULT_BLOSSOM_SERVERS']),
       maxMimeBytes: _parsePositiveInt(env['MAX_MIME_BYTES'], 67108864),
+      inboundNotificationUrl: _parseAbsoluteUri(
+        env['INBOUND_NOTIFICATION_URL'],
+      ),
+      inboundNotificationToken: _blankToNull(env['INBOUND_NOTIFICATION_TOKEN']),
     );
   }
+}
+
+Uri? _parseAbsoluteUri(String? value) {
+  final normalized = _blankToNull(value);
+  if (normalized == null) return null;
+  final uri = Uri.tryParse(normalized);
+  if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
+    throw FormatException('INBOUND_NOTIFICATION_URL must be an absolute URL');
+  }
+  return uri;
 }
 
 String? _blankToNull(String? value) {

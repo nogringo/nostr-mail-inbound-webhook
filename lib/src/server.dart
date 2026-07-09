@@ -106,7 +106,11 @@ Future<Response> _handleMime(
         originalRecipient: recipient.original,
         mailFrom: fields['sender'],
       );
-      await mailer.sendMime(message, mailFrom: fields['sender']);
+      await mailer.sendMime(
+        message,
+        recipientPubkey: recipient.pubkey,
+        mailFrom: fields['sender'],
+      );
     }
   } catch (error) {
     return Response.internalServerError(body: 'nostr delivery failed\n');

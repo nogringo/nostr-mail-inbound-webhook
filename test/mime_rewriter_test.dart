@@ -4,8 +4,7 @@ import 'package:inbound_mail_webhook/inbound_mail_webhook.dart';
 
 void main() {
   test('rewrites MIME for one recipient without leaking other recipients', () {
-    const pubkey =
-        '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+    final (_, pubkey) = const Bip340EventSignerFactory().generateKeyPair();
     const rawMime =
         'From: Sender <sender@example.com>\r\n'
         'To: a@example.com, b@example.com\r\n'

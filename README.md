@@ -33,7 +33,16 @@ BOOTSTRAP_NOSTR_RELAYS=wss://relay.damus.io,wss://nos.lol
 DEFAULT_DM_RELAYS=wss://relay.nmail.li,wss://auth.nostr1.com
 DEFAULT_BLOSSOM_SERVERS=https://blossom.nmail.li
 MAX_MIME_BYTES=67108864
+INBOUND_NOTIFICATION_URL=https://api.example.com/inbound/notifications
+INBOUND_NOTIFICATION_TOKEN=change-me
 ```
+
+When the notification URL and token are configured, the webhook synchronously
+calls the inbound notification API after each outgoing event and its destination
+relays have been built, but before the event is queued for publication. Gift
+wrap content and signatures are omitted from the notification; public email
+events are sent in full. The API must return `202 {"status":"accepted"}`;
+otherwise delivery fails and the inbound request can be retried.
 
 If `WEBHOOK_SIGNING_KEY` is set, signatures are verified like Mailgun:
 `HMAC_SHA256(timestamp + token)`.
@@ -62,14 +71,6 @@ With the published GHCR image:
 cp .env.example .env
 # Edit .env, especially NOSTR_PRIVATE_KEY and WEBHOOK_SIGNING_KEY.
 docker compose up -d
-```
-
-To build locally with Compose:
-
-```sh
-cp .env.example .env
-# Edit .env, especially NOSTR_PRIVATE_KEY and WEBHOOK_SIGNING_KEY.
-docker compose -f docker-compose.build.yml up --build -d
 ```
 
 ## License

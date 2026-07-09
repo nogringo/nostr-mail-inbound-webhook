@@ -3,8 +3,7 @@ import 'package:test/test.dart';
 import 'package:inbound_mail_webhook/inbound_mail_webhook.dart';
 
 void main() {
-  const hexPubkey =
-      '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  final (_, hexPubkey) = const Bip340EventSignerFactory().generateKeyPair();
 
   late RecipientResolver resolver;
   late List<String> nip05Lookups;
@@ -36,7 +35,10 @@ void main() {
   });
 
   test('resolves base36 local-part', () async {
-    final base36 = BigInt.parse(hexPubkey, radix: 16).toRadixString(36);
+    final base36 = BigInt.parse(
+      hexPubkey,
+      radix: 16,
+    ).toRadixString(36).padLeft(48, '0');
     expect(base36.length, inInclusiveRange(48, 50));
 
     final resolved = await resolver.resolveOne('$base36@example.com');

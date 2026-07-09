@@ -12,13 +12,19 @@ import 'package:sembast/sembast_io.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'config.dart';
+import 'inbound_notification.dart';
 import 'mime_delivery.dart';
 
 class NostrRuntime implements MimeMailer {
-  NostrRuntime._({required this.ndk, required this.client});
+  NostrRuntime._({
+    required this.ndk,
+    required this.client,
+    this.notificationClient,
+  });
 
   final Ndk ndk;
   final NostrMailClient client;
+  final InboundNotificationClient? notificationClient;
 
   static Future<NostrRuntime> create(WebhookConfig config) async {
     final privateKey = _privateKeyHex(config.nostrPrivateKey);
@@ -51,6 +57,22 @@ class NostrRuntime implements MimeMailer {
       factory: getIdbFactorySqflite(databaseFactoryFfi),
       dbName: p.join(dataDir.path, 'inbound_mail_webhook_blossom.db'),
     );
+    final notificationUrl = config.inboundNotificationUrl;
+    final notificationToken = config.inboundNotificationToken;
+    if ((notificationUrl == null) != (notificationToken == null)) {
+      throw StateError(
+        'INBOUND_NOTIFICATION_URL and INBOUND_NOTIFICATION_TOKEN '
+        'must be configured together',
+      );
+    }
+    final notificationClient =
+        notificationUrl != null && notificationToken != null
+        ? InboundNotificationClient(
+            url: notificationUrl,
+            token: notificationToken,
+          )
+        : null;
+
     final client = await NostrMailClient.create(
       ndk: ndk,
       db: db,
@@ -63,7 +85,11 @@ class NostrRuntime implements MimeMailer {
           : config.defaultBlossomServers,
     );
 
-    return NostrRuntime._(ndk: ndk, client: client);
+    return NostrRuntime._(
+      ndk: ndk,
+      client: client,
+      notificationClient: notificationClient,
+    );
   }
 
   Future<String?> resolveNip05(String identifier) async {
@@ -77,12 +103,33 @@ class NostrRuntime implements MimeMailer {
   }
 
   @override
-  Future<void> sendMime(MimeMessage message, {String? mailFrom}) {
-    return client.sendMime(message, keepCopy: false, mailFrom: mailFrom);
+  Future<void> sendMime(
+    MimeMessage message, {
+    required String recipientPubkey,
+    String? mailFrom,
+  }) {
+    final email = EmailNotification.fromMime(message);
+    return client.sendMime(
+      message,
+      to: [NostrRecipient.fromPubkey(recipientPubkey)],
+      keepCopy: false,
+      mailFrom: mailFrom,
+      beforePublish: notificationClient == null
+          ? null
+          : (event, relays) async {
+              await notificationClient!.notify(
+                recipientPubkey: recipientPubkey,
+                relays: relays,
+                event: event,
+                email: email,
+              );
+            },
+    );
   }
 
   Future<void> dispose() async {
     await client.dispose();
+    notificationClient?.close();
     await ndk.destroy();
   }
 }
