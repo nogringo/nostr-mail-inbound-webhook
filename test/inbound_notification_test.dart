@@ -102,4 +102,36 @@ void main() {
       throwsA(isA<InboundNotificationException>()),
     );
   });
+
+  test('best-effort notification logs failures without throwing', () async {
+    Object? loggedError;
+    StackTrace? loggedStackTrace;
+
+    await notifyInboundBestEffort(
+      notifier: _ThrowingNotifier(),
+      recipientPubkey: recipientPubkey,
+      relays: const ['wss://relay.example.net'],
+      event: event(kind: giftWrapKind),
+      email: email,
+      onError: (error, stackTrace) {
+        loggedError = error;
+        loggedStackTrace = stackTrace;
+      },
+    );
+
+    expect(loggedError, isA<InboundNotificationException>());
+    expect(loggedStackTrace, isNotNull);
+  });
+}
+
+class _ThrowingNotifier implements InboundNotifier {
+  @override
+  Future<void> notify({
+    required String recipientPubkey,
+    required List<String> relays,
+    required Nip01Event event,
+    required EmailNotification email,
+  }) async {
+    throw InboundNotificationException('notification failed');
+  }
 }

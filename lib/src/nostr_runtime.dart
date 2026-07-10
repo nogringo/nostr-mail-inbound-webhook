@@ -117,11 +117,16 @@ class NostrRuntime implements MimeMailer {
       beforePublish: notificationClient == null
           ? null
           : (event, relays) async {
-              await notificationClient!.notify(
+              await notifyInboundBestEffort(
+                notifier: notificationClient!,
                 recipientPubkey: recipientPubkey,
                 relays: relays,
                 event: event,
                 email: email,
+                onError: (error, stackTrace) {
+                  stderr.writeln('inbound notification failed: $error');
+                  stderr.writeln(stackTrace);
+                },
               );
             },
     );

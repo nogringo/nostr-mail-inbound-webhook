@@ -51,6 +51,26 @@ abstract interface class InboundNotifier {
   });
 }
 
+Future<void> notifyInboundBestEffort({
+  required InboundNotifier notifier,
+  required String recipientPubkey,
+  required List<String> relays,
+  required Nip01Event event,
+  required EmailNotification email,
+  void Function(Object error, StackTrace stackTrace)? onError,
+}) async {
+  try {
+    await notifier.notify(
+      recipientPubkey: recipientPubkey,
+      relays: relays,
+      event: event,
+      email: email,
+    );
+  } catch (error, stackTrace) {
+    onError?.call(error, stackTrace);
+  }
+}
+
 class InboundNotificationClient implements InboundNotifier {
   InboundNotificationClient({
     required this.url,

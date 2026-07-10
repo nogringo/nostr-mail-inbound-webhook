@@ -37,12 +37,12 @@ INBOUND_NOTIFICATION_URL=https://api.example.com/inbound/notifications
 INBOUND_NOTIFICATION_TOKEN=change-me
 ```
 
-When the notification URL and token are configured, the webhook synchronously
-calls the inbound notification API after each outgoing event and its destination
-relays have been built, but before the event is queued for publication. Gift
-wrap content and signatures are omitted from the notification; public email
-events are sent in full. The API must return `202 {"status":"accepted"}`;
-otherwise delivery fails and the inbound request can be retried.
+When the notification URL and token are configured, the webhook calls the
+inbound notification API after each outgoing event and its destination relays
+have been built, but before the event is queued for publication. Gift wrap
+content and signatures are omitted from the notification; public email events
+are sent in full. Notification delivery is best effort: failures are logged but
+do not prevent the email from being sent to Nostr.
 
 If `WEBHOOK_SIGNING_KEY` is set, signatures are verified like Mailgun:
 `HMAC_SHA256(timestamp + token)`.
