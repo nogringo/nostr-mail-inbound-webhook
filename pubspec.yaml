@@ -10,23 +10,25 @@ topics:
   - smtp
 
 environment:
-  sdk: ^3.12.1
+  sdk: ^3.12.2
 
 dependencies:
   bip340: ^0.3.1
-  blossom_cache: ^0.3.0
+  blossom_cache: ^0.4.0
   crypto: ^3.0.7
+  drift: ^2.35.0
   enough_mail_plus: ^2.2.4
   http: ^1.6.0
-  idb_sqflite: ^1.4.2
-  ndk: ^0.8.4-dev.5
-  nostr_mail: ^2.4.0
+  idb_sqflite: ^1.4.5
+  ndk: ^0.10.0-dev.6
+  nostr_mail: ^3.2.3
   path: ^1.9.1
-  sembast: ^3.8.9
+  sembast: ^3.8.11
   shelf: ^1.4.2
-  shelf_router: ^1.1.2
-  sqflite_common_ffi: ^2.4.2
+  shelf_router: ^1.1.4
+  sqflite_common_ffi: ^2.4.3
+  sync_engine_shim_for_ndk: ^0.7.1
 
 dev_dependencies:
-  lints: ^6.0.0
-  test: ^1.25.6
+  lints: ^6.1.0
+  test: ^1.32.0
