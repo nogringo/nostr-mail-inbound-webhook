@@ -60,6 +60,11 @@ For each recipient, the local-part before `@` is checked in this order:
 3. base36 pubkey, only when the whole local-part is 48 to 50 alphanumeric chars
 4. NIP-05 lookup using the full email address
 
+NIP-05 lookups are signed with NIP-98 using `NOSTR_PRIVATE_KEY`, with a `u` tag
+that includes the query. An nmail-api instance that lists the webhook pubkey in
+`NIP05_PRIVATE_READERS` then also resolves private addresses. Other NIP-05
+servers ignore the header and answer as usual.
+
 Unresolved addresses are skipped. If none resolve, the webhook returns `406` so
 Haraka can dead-letter the message.
 

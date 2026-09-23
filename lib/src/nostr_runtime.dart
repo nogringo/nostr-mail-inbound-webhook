@@ -5,7 +5,6 @@ import 'package:blossom_cache/blossom_cache.dart';
 import 'package:drift/native.dart';
 import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:idb_sqflite/idb_sqflite.dart';
-import 'package:ndk/entities.dart' as ndk_entities;
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
 import 'package:path/path.dart' as p;
@@ -16,6 +15,7 @@ import 'package:sync_engine_shim_for_ndk/sync_engine_shim_for_ndk.dart';
 import 'config.dart';
 import 'inbound_notification.dart';
 import 'mime_delivery.dart';
+import 'nip05_resolver.dart';
 
 class NostrRuntime implements MimeMailer {
   NostrRuntime._({
@@ -23,6 +23,7 @@ class NostrRuntime implements MimeMailer {
     required this.client,
     required this.database,
     required this.syncEngine,
+    required this.nip05Resolver,
     this.notificationClient,
   });
 
@@ -30,6 +31,7 @@ class NostrRuntime implements MimeMailer {
   final NostrMailClient client;
   final NostrMailDatabase database;
   final SyncEngine syncEngine;
+  final Nip05Resolver nip05Resolver;
   final InboundNotificationClient? notificationClient;
 
   static Future<NostrRuntime> create(WebhookConfig config) async {
@@ -103,19 +105,15 @@ class NostrRuntime implements MimeMailer {
       client: client,
       database: database,
       syncEngine: syncEngine,
+      nip05Resolver: Nip05Resolver(
+        signer: Bip340EventSigner(privateKey: privateKey, publicKey: publicKey),
+      ),
       notificationClient: notificationClient,
     );
   }
 
-  Future<String?> resolveNip05(String identifier) async {
-    final result = await ndk.nip05.resolve(identifier);
-    return switch (result) {
-      ndk_entities.Nip05Found(:final data) => data.pubKey,
-      ndk_entities.Nip05NotFound() ||
-      ndk_entities.Nip05ResolveNetworkError() ||
-      ndk_entities.Nip05ResolveInvalidResponse() => null,
-    };
-  }
+  Future<String?> resolveNip05(String identifier) =>
+      nip05Resolver.resolve(identifier);
 
   @override
   Future<void> sendMime(
@@ -151,6 +149,7 @@ class NostrRuntime implements MimeMailer {
     await client.dispose();
     await syncEngine.dispose();
     await database.close();
+    nip05Resolver.close();
     notificationClient?.close();
     await ndk.destroy();
   }
