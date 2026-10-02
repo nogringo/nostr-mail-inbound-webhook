@@ -14,14 +14,14 @@ environment:
 
 dependencies:
   bip340: ^0.3.1
-  blossom_cache: ^0.4.0
+  blossom_cache: ^0.5.0
   crypto: ^3.0.7
   drift: ^2.35.0
   enough_mail_plus: ^2.2.4
   http: ^1.6.0
   idb_sqflite: ^1.4.5
-  ndk: ^0.10.0-dev.6
-  nostr_mail: ^3.2.3
+  ndk: ^0.10.1
+  nostr_mail: ^6.0.1
   path: ^1.9.1
   sembast: ^3.8.11
   shelf: ^1.4.2
