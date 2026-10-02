@@ -68,6 +68,11 @@ servers ignore the header and answer as usual.
 Unresolved addresses are skipped. If none resolve, the webhook returns `406` so
 Haraka can dead-letter the message.
 
+## Forwarded MIME
+
+Each recipient receives the original MIME unchanged, so the sender's DKIM
+signature still verifies. The webhook only prepends `X-Original-Recipient`.
+
 ## Running
 
 With the published GHCR image:

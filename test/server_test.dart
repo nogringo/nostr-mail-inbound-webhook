@@ -85,7 +85,11 @@ void main() {
 
     expect(response.statusCode, 200);
     expect(mailer.sent, hasLength(1));
-    expect(mailer.sent.single.to!.single.email, contains('@nostr'));
+    expect(mailer.sent.single.to!.single.email, 'alice@example.com');
+    expect(
+      mailer.sent.single.getHeaderValue('X-Original-Recipient'),
+      'alice@example.com',
+    );
   });
 
   test('POST /mime returns 406 when no recipient resolves', () async {

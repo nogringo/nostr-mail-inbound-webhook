@@ -8,7 +8,7 @@ import 'package:shelf_router/shelf_router.dart';
 import 'config.dart';
 import 'mailgun_signature.dart';
 import 'mime_delivery.dart';
-import 'mime_rewriter.dart';
+import 'mime_trace.dart';
 import 'recipient_resolver.dart';
 
 Handler createHandler({
@@ -100,11 +100,9 @@ Future<Response> _handleMime(
 
   try {
     for (final recipient in resolved) {
-      final message = rewriteMimeForRecipient(
+      final message = traceMimeForRecipient(
         rawMime: rawMime,
-        recipientPubkey: recipient.pubkey,
         originalRecipient: recipient.original,
-        mailFrom: fields['sender'],
       );
       await mailer.sendMime(
         message,
